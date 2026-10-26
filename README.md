@@ -1,6 +1,6 @@
 # NORA SPACE
 
-**Your personal operating system.** 一个私人在线工作与学习空间。Phase 1 提供登录、Dashboard、任务、灵感、网站收藏、日历、Spotify 歌单与个人设置；其他模块目前显示“即将开放”。Phase 1.5 保留紧凑的首页 Spotify 官方播放器，将全站改为蓝、白、浅灰的清晰视觉层级，媒体入口用少量红色强调，同时保留完整深色模式。
+**Your personal operating system.** 一个私人在线工作与学习空间。Phase 1 提供登录、Dashboard、任务、灵感、网站收藏、日历、Spotify 歌单与个人设置。Phase 2 Sprint A 的学习与健身模块已完成本地代码，等待独立 SQL 迁移和真实账户验收；AI、内容分析、Lark 等模块仍未开发。Phase 1.5 保留紧凑的首页 Spotify 官方播放器与全站深浅模式。
 
 截至 2026-10-26，本地环境指向 Supabase 项目 `ixmjytrgzrsjgbwfzamz`。用户已确认执行 Phase 1 SQL 并准备私人账户；本轮再次验证 Auth 健康接口 HTTP 200，四张表拒绝匿名读取。Auth 公开配置返回 `disable_signup=true`，公开注册已关闭；`mailer_autoconfirm=false` 与“需要确认邮箱”的设置一致。公开设置接口没有返回匿名登录开关，因此该项仍需在 Dashboard 核对。真实账户的数据读写、跨账户 RLS 隔离与线上域名配置仍待人工验收。本地 Git 已初始化，尚无远程地址，也未部署。
 
@@ -26,7 +26,7 @@ Next.js App Router、TypeScript、Tailwind CSS、shadcn/ui 风格本地组件、
 
 5. 执行 `npm run dev`，打开 `http://localhost:3000`。首次访问私人页面会跳转到 `/login`。
 
-项目脚本：`npm run lint`、`npm run typecheck`、`npm run build`、`npm run start`、`npm run smoke`。`smoke` 会启动已构建的生产服务，检查登录页和匿名访问重定向；请先执行 `npm run build`。此项目在 Windows 执行环境中采用 Next.js 官方支持的 Webpack 构建模式。
+项目脚本：`npm run lint`、`npm run typecheck`、`npm run test`、`npm run build`、`npm run start`、`npm run smoke`。`smoke` 会启动已构建的生产服务，检查登录页和匿名访问重定向；请先执行 `npm run build`。此项目在 Windows 执行环境中采用 Next.js 官方支持的 Webpack 构建模式。
 
 ## 2. Supabase 配置核对
 
@@ -92,6 +92,12 @@ git push -u origin main
 4. 打开生产站点，重复“手动验收”的登录、保存、刷新、退出和手机浏览器检查；确认访问私人页面的响应不可被共享缓存。
 
 当前代码与本地构建具备部署基础，Supabase 公开注册已关闭。GitHub 私有远程仓库、Vercel 项目与环境变量、Supabase 生产 Site URL、真实账户读写和跨账户隔离仍待完成或复核，因此网站仍未完成正式上线验收。本仓库未自动部署或推送。完整操作与上线门槛见 [PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md)。
+
+## Phase 2 Sprint A：学习与健身
+
+`/learning` 可创建英语或韩语目标，按日期、总量与每周天数自动拆分学习任务；可完成任务、调整日期、记录实际学习分钟并查看进度和历史。`/fitness` 可设每周目标、管理训练计划与实际训练、收藏外部教学视频。日历按类型显示任务、学习和训练计划；Dashboard 读取已存储的学习与训练数据。没有新表时页面会显示待迁移提示。
+
+新表只在独立文件 [`supabase/migrations/202610260001_sprint_a.sql`](supabase/migrations/202610260001_sprint_a.sql) 中定义，**不会随网站代码自动部署到数据库**。先阅读 [数据库迁移指南](DATABASE_MIGRATION_GUIDE.md)，再按 [Phase 2 验收清单](PHASE2_CHECKLIST.md) 和 [正式上线人工验收](PRODUCTION_ACCEPTANCE.md) 操作。Sprint B、C、D 尚未开始；真实账户 CRUD 和远程 RLS 在迁移前均为待人工测试。
 
 ## 常见问题
 

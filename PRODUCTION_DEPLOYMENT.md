@@ -63,6 +63,12 @@ Vercel 集成可用但尚未连接，本轮无法核实所属账号或团队，�
 
 参考：[Supabase Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls)、[Supabase SSR 客户端](https://supabase.com/docs/guides/auth/server-side/creating-a-client?framework=nextjs&queryGroups=framework)、[Vercel Next.js](https://vercel.com/docs/frameworks/full-stack/nextjs)、[Vercel 环境变量](https://vercel.com/docs/environment-variables)、[Vercel Node.js 版本](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)。
 
+## Phase 2 Sprint A 额外发布步骤
+
+Sprint A 的学习与健身页面依赖独立的七张新表。先按照 [数据库迁移指南](DATABASE_MIGRATION_GUIDE.md) 对现有 Supabase 项目备份并执行 [`202610260001_sprint_a.sql`](supabase/migrations/202610260001_sprint_a.sql)，再按 [Phase 2 清单](PHASE2_CHECKLIST.md) 完成真实账户 CRUD、刷新持久化、匿名拒绝和双账户隔离测试。未执行迁移前页面只显示待启用提示，不应将模块标为已验收。新表不使用 Secret Key 或 Service Role Key。
+
+仓库新增 GitHub Actions CI：Node.js 24 运行 lint、typecheck、单元测试和编译构建。CI 使用占位 Supabase 公共变量，只验证代码，不连接私人数据库；远程数据库和线上登录必须按 [正式上线人工验收](PRODUCTION_ACCEPTANCE.md) 单独检查。Vercel 正式环境仍需配置真实项目的两个 `NEXT_PUBLIC_` 变量。当前本地没有 Git 远程，尚未推送或部署；Vercel 账号仍待验证。
+
 ## 6. 发布后的人工验收
 
 1. 无痕浏览器访问 `/`、`/tasks`、`/ideas`、`/resources`、`/settings`，应跳转到 `/login`，且不得看到私人数据。

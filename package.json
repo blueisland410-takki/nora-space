@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test scripts/*.test.mjs",
     "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {

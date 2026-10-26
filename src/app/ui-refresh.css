@@ -335,3 +335,52 @@
   .item-card:hover, .feature-card:hover, .nav-link:hover { transform: none; }
   .page-loading-indicator { animation: none; }
 }
+/* Sprint A trackers keep the shared cards, fields, focus states and color tokens. */
+.tracker-stack { display: grid; gap: 18px; }
+.tracker-card { padding: 24px 26px; scroll-margin-top: 24px; }
+.tracker-card-head, .tracker-section-head, .tracker-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.tracker-card-head .section-title { margin: 10px 0 6px; }
+.tracker-card-head p { margin: 0; line-height: 1.6; }
+.tracker-actions { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+.tracker-progress-heading, .tracker-meta { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.tracker-progress-heading { margin-top: 21px; font-size: 13px; }
+.tracker-progress-heading span { color: var(--accent-dark); font-weight: 750; }
+.tracker-progress { height: 9px; margin: 10px 0; overflow: hidden; border-radius: 20px; background: var(--surface-soft); }
+.tracker-progress > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.tracker-meta { justify-content: flex-start; color: var(--muted); font-size: 12px; }
+.tracker-meta > span { display: inline-flex; align-items: center; gap: 5px; }
+.tracker-subtitle { margin: 25px 0 8px; font-size: 13px; }
+.tracker-list { max-height: 400px; overflow-y: auto; }
+.tracker-row { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px 0; border-top: 1px solid var(--line); }
+.tracker-row-main { min-width: 0; flex: 1; }
+.tracker-row-main strong { display: block; font-size: 12px; }
+.tracker-row-main small { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.tracker-date-label { color: var(--muted); font-size: 11px; }
+.tracker-date { width: 148px; margin-top: 4px; }
+.tracker-search-label { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; }
+.tracker-search { width: min(230px, 42vw); max-width: 100%; }
+.tracker-card .button-sm, .tracker-section-head .button-sm, .tracker-summary-grid .button-sm, .tracker-filter-row .filter-button { min-height: 44px; }
+.tracker-date { min-height: 44px; }
+.tracker-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 25px; }
+.tracker-summary-grid .card-body { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.tracker-summary-grid p { margin: 0; }
+.tracker-number { font-size: 32px; line-height: 1.1; }
+.tracker-number small { color: var(--muted); font-size: 14px; }
+.tracker-toolbar { align-items: center; margin-bottom: 26px; }
+.tracker-section-title, .tracker-section-head { margin: 30px 0 14px; }
+.tracker-section-head { align-items: center; }
+.tracker-numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tracker-video-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tracker-video { overflow: hidden; }
+.tracker-video-cover { height: 150px; display: grid; place-items: center; overflow: hidden; color: var(--accent); background: var(--surface-tint); }
+.tracker-video-cover img { width: 100%; height: 100%; object-fit: cover; }
+.tracker-video-body { padding: 16px; }
+.tracker-video-body h3 { margin: 0 0 8px; font-size: 14px; overflow-wrap: anywhere; }
+.tracker-video-body p { overflow-wrap: anywhere; }
+.tracker-video-body .tracker-section-head { margin: 14px 0 0; }
+.calendar-entry:hover { color: var(--accent-dark); }
+.calendar-type-learning { color: var(--accent-dark); background: var(--surface-tint); }
+.calendar-type-fitness { color: #397d6b; background: #e6f5ef; }
+.app-shell.theme-dark .calendar-type-fitness { color: #a4dfc9; background: #253e36; }
+@media (max-width: 950px) { .tracker-summary-grid, .tracker-video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .tracker-page-header { display: grid; grid-template-columns: minmax(0, 1fr); }.tracker-page-header > div { min-width: 0; }.tracker-page-header > .button-base { justify-self: start; }.tracker-filter-row { max-width: 100%; }.tracker-filter-row > .tracker-search-label { flex-basis: 100%; }.tracker-card { padding: 18px; }.tracker-card-head, .tracker-toolbar { flex-wrap: wrap; }.tracker-summary-grid, .tracker-video-grid { grid-template-columns: 1fr; }.tracker-row { flex-wrap: wrap; }.tracker-row-main { flex-basis: calc(100% - 42px); }.tracker-date-label { margin-left: 32px; }.tracker-date { width: 150px; }.tracker-search { width: min(210px, 55vw); }.tracker-search-label { flex-wrap: wrap; }.tracker-numbers { grid-template-columns: 1fr; } }
