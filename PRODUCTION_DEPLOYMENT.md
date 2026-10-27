@@ -1,6 +1,6 @@
 # NORA SPACE Phase 1.5 上线指南
 
-状态：2026-10-26。本地 Git 已初始化；**尚未创建或推送 GitHub 远程仓库，尚未部署 Vercel**。用户已在 Supabase Dashboard 关闭公开注册；本轮只读复核确认生效。本地项目根目录为 `D:\nora-space`；Vercel 导入仓库时的 Root Directory 应选仓库根目录 `./`，不能填写本机 Windows 路径。
+状态：2026-10-27。本地 Git 已存在；GitHub 目标仓库可读取且用户接受 Public，但远程目前只有初始 README，**完整源码尚未同步，尚未部署 Vercel**。用户已关闭 Supabase 公开注册，最新只读复核仍为关闭。本地根目录为 `D:\nora-space`；未来 Vercel 的 Root Directory 选仓库根目录 `./`，不能填写本机 Windows 路径。
 
 ## 1. 上线门槛
 
@@ -11,7 +11,7 @@
 | 私人表匿名访问 | 四表匿名查询均为 401 / 42501 | 用两个真实账户完成 CRUD 与跨账户隔离验收 |
 | RLS 远程策略 | 本地迁移文件有四表 RLS 和 owner 策略；远程 SQL 尚未只读核对 | 在 Supabase SQL Editor 运行 README 的只读查询 |
 | Supabase 注册开关 | 已通过：`disable_signup=true` | 保持关闭；匿名登录开关需在 Dashboard 核对 |
-| GitHub / Vercel | 本地 Git `main` 已初始化、忽略规则已验证；无远程、无部署 | 用户确认目标账号与项目后，建 Private 仓库并导入 Vercel，完成线上回归 |
+| GitHub / Vercel | 本地 Git 与忽略规则已验证；远程 Public 仓库只有 README；无部署 | 先确认候选提交并同步现有代码；Vercel 本轮暂不处理 |
 
 本阶段不需要 Secret Key、Service Role Key、用户密码或数据库直连密码。`NEXT_PUBLIC_` 变量会进入浏览器包，只能存放 Supabase URL 和 Publishable Key。GitHub Private 仓库只限制源码可见性；Vercel 网站是否公开仍由部署和访问控制决定。
 
@@ -23,28 +23,19 @@
 4. 在 SQL Editor 运行 [README 的只读 RLS 查询](README.md#2-supabase-配置核对)。确认 `tasks`、`ideas`、`bookmarks`、`user_preferences` 均启用 RLS，四种操作策略都限定 `auth.uid() = owner_id`。不要重跑迁移或重置数据库。
 5. 用私人账户 A 测试任务、灵感、收藏、设置的创建、读取、修改、删除和刷新持久化。若有账户 B，使用独立浏览器配置文件检查 B 不能读写 A 的记录；没有账户 B 时明确保留“待人工验收”。
 
-## 3. GitHub Private 仓库
+## 3. GitHub 源码同步
 
-当前目录已有本地 Git `main`，尚无远程地址。已连接的 GitHub 账号为 `blueisland410-takki`，建议目标为 [blueisland410-takki/nora-space](https://github.com/blueisland410-takki/nora-space)，仓库必须设为 **Private**；当前查询返回 404，尚不能据此认定远程已创建。用户确认该账号与 URL 后再创建，不在 GitHub 初始化会与本地提交冲突的 README 或许可证。核对命令：
+2026-10-27 已核实目标 [blueisland410-takki/nora-space](https://github.com/blueisland410-takki/nora-space) 可以读取；当前为 Public，用户已明确接受公开源码，替代此前 Private 要求。远程 main 只有初始 README，本地应用代码尚未同步，不要重复创建仓库或重新开发网站。
 
-当前 GitHub 连接没有“创建仓库”能力，本机也没有 `gh` 命令。如果仍使用现有连接，需要用户在 GitHub 网页手动创建空的 Private `nora-space` 仓库；之后可继续核对远程、推送本地 `main`，无需重建项目。
+按 [GITHUB_SYNC_GUIDE.md](GITHUB_SYNC_GUIDE.md) 操作：检查本地工作区与全部历史，保留远程初始提交和 README，将本地详细 README 另存为 PROJECT_GUIDE.md，在本地准备分支合并独立历史，报告候选提交后等待推送确认。后续只用普通 push；远程前进或出现其他冲突时重新核对，不强推、不删除已有文件。
 
-```powershell
-git check-ignore -v .env.local
-git ls-files .env.local
-git ls-files node_modules .next .vercel
-git status --short --branch
-```
-
-`git check-ignore` 应指向 `/.env.local`，`git ls-files .env.local` 应无输出；同时确认 `node_modules` 和 `.next` 不在暂存列表，且没有密码或敏感 Token。若已有其他仓库历史，应保留历史并逐项复核，不能重新初始化、强制推送或覆盖已有远程。
-
-**本轮不执行远程步骤。** 确认目标账号、仓库 URL、Vercel 所属账号或团队与部署项目后，才创建 Private 仓库、运行 `git remote add origin <已确认的私有仓库 URL>`、`git fetch origin` 检查远程是否已有提交；有历史时先处理差异，最后在明确授权下执行普通 `git push -u origin main`。若 `.env.local` 曾进入任何 Git 历史，先处理历史并轮换受影响的凭据。
+环境文件、密钥、备份、私人数据、依赖和构建缓存不得提交；.env.example 只保留占位值。GitHub 网页上传成功标准与 CI 检查步骤已列入同步指南。Vercel 审核不阻塞本地 Git 准备，本轮不执行部署。
 
 ## 4. Vercel 项目设置
 
 Vercel 集成可用但尚未连接，本轮无法核实所属账号或团队，也没有项目链接。请先确定要使用的 Vercel 账号或团队；建议部署项目名 `nora-space`。收到目标账号和发布确认后，再连接集成并创建或导入项目。
 
-1. 从已确认的 GitHub Private `nora-space` 仓库导入 Vercel。Framework Preset 选 **Next.js**；Root Directory 选 `./`（因为 `package.json` 在仓库根目录）。Build Command 使用项目脚本 `npm run build`，它执行 `next build --webpack`。
+1. 从已同步完整代码的 GitHub `nora-space` 仓库导入 Vercel。Framework Preset 选 **Next.js**；Root Directory 选 `./`（因为 `package.json` 在仓库根目录）。Build Command 使用项目脚本 `npm run build`，它执行 `next build --webpack`。
 2. Node.js Version 选 **24.x**，与本地通过构建的主版本及 `package.json` 的 `engines.node` 一致。若 Vercel 改变默认版本，应再核对该设置。
 3. 在 Vercel Project Settings → Environment Variables 配置下表。Production 必填；仅在需要预览部署时给 Preview 配置相同 Supabase 项目，并注意预览站点也能访问同一私人数据服务。不要上传 `.env.local` 文件。
 

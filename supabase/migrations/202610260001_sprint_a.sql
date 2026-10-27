@@ -216,9 +216,11 @@ alter table public.fitness_plans enable row level security;
 alter table public.workout_sessions enable row level security;
 alter table public.fitness_video_bookmarks enable row level security;
 
+-- Supabase defaults may grant TRUNCATE/REFERENCES/TRIGGER/MAINTAIN too.
+-- Clear default and PUBLIC grants on these new tables before granting only CRUD.
 revoke all on public.learning_goals, public.learning_tasks, public.study_sessions,
   public.fitness_settings, public.fitness_plans, public.workout_sessions,
-  public.fitness_video_bookmarks from anon;
+  public.fitness_video_bookmarks from public, anon, authenticated;
 grant select, insert, update, delete on public.learning_goals, public.learning_tasks,
   public.study_sessions, public.fitness_settings, public.fitness_plans,
   public.workout_sessions, public.fitness_video_bookmarks to authenticated;

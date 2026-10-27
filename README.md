@@ -4,7 +4,7 @@
 
 截至 2026-10-26，本地环境指向 Supabase 项目 `ixmjytrgzrsjgbwfzamz`。用户已确认执行 Phase 1 SQL 并准备私人账户；本轮再次验证 Auth 健康接口 HTTP 200，四张表拒绝匿名读取。Auth 公开配置返回 `disable_signup=true`，公开注册已关闭；`mailer_autoconfirm=false` 与“需要确认邮箱”的设置一致。公开设置接口没有返回匿名登录开关，因此该项仍需在 Dashboard 核对。真实账户的数据读写、跨账户 RLS 隔离与线上域名配置仍待人工验收。本地 Git 已初始化，尚无远程地址，也未部署。
 
-Phase 1.5 的界面改动、尺寸与视觉验收见 [UI_REDESIGN_CHANGELOG.md](UI_REDESIGN_CHANGELOG.md)；私有 GitHub 仓库、Vercel 与 Supabase 的上线步骤见 [PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md)；逐项状态见 [PHASE1_CHECKLIST.md](PHASE1_CHECKLIST.md)。
+Phase 1.5 的界面改动、尺寸与视觉验收见 [UI_REDESIGN_CHANGELOG.md](UI_REDESIGN_CHANGELOG.md)；GitHub、Vercel 与 Supabase 的上线步骤见 [PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md)；逐项状态见 [PHASE1_CHECKLIST.md](PHASE1_CHECKLIST.md)。
 
 ## 技术栈
 
@@ -14,7 +14,7 @@ Next.js App Router、TypeScript、Tailwind CSS、shadcn/ui 风格本地组件、
 
 1. 安装当前受支持的 Node.js（本项目已在 Node.js 24 上构建）。
 2. 在 PowerShell 中进入 `D:\nora-space`。
-3. 执行 `npm install`。
+3. 执行 `npm ci`，按锁文件安装依赖。
 4. 确认根目录有 `.env.local`，其中包含：
 
    ```dotenv
@@ -55,7 +55,7 @@ order by tablename, policyname;
 
 ### 数据安全
 
-四张私人表均启用 RLS。`SELECT`、`INSERT`、`UPDATE`、`DELETE` 分别限定 `auth.uid() = owner_id`；匿名角色没有表权限。Server Actions 从已验证的登录状态写入 `owner_id`，不会接受前端传来的所属用户 ID。所有任务、灵感、收藏和设置均保存在 Supabase，不依赖浏览器 localStorage。
+本地 Phase 1 迁移为四张私人表启用 RLS，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 分别限定 `auth.uid() = owner_id`，并撤销匿名表权限。2026-10-27 远程只读目录查询已核对四表 RLS 与全部 owner 策略；另发现 authenticated 有多余 TRUNCATE 权限，本地修正提案已准备，尚未远程执行。跨账户隔离仍需普通账户实测。Server Actions 从已验证的登录状态写入 owner_id；数据保存在 Supabase，不依赖浏览器 localStorage。详见 [迁移与权限审查](DATABASE_MIGRATION_GUIDE.md)。
 
 ## 3. 手动验收
 
@@ -71,22 +71,17 @@ order by tablename, policyname;
 8. 使用浏览器开发者工具在 375px 手机、768px 平板、1280px 与 1440px 桌面视口检查导航、播放器、弹窗和日历；本轮的代表性视觉预览已验证四种视口无横向溢出，日历 375px 日期按钮约 44px 宽，真实账户页面仍需人工复核。
 9. 用浏览器无痕窗口验证未登录访问被送回登录页。用账户 A 创建一条可识别的测试记录，再在另一独立浏览器配置文件中用账户 B 登录：B 不应看到 A 的记录；B 创建的记录也不应出现在 A 的页面。分别刷新并检查四类数据。需要更强的 RLS 验证时，用各账户自己的会话向同一记录 ID 发起只读查询，并确认另一账户得不到该记录。不要向任何人提供密码或访问令牌。若只有一个私人账户，跨账户隔离仍标记为待验收。
 
-## 4. GitHub 私有仓库
+## 4. GitHub 源码同步
 
-当前项目目录已初始化本地 Git `main`，尚无远程地址。只有在用户确认具体 GitHub 账号、目标仓库 URL 与 Vercel 项目后，才创建 **Private** 远程仓库并推送：
+目标仓库为 [blueisland410-takki/nora-space](https://github.com/blueisland410-takki/nora-space)，2026-10-27 已可读取，用户明确接受 Public。远程 main 目前仅有初始 README，尚未包含网站源码。本地已有完整 Phase 1 / Phase 1.5 / Sprint A 源码和提交，不能重新初始化项目。
 
-```powershell
-git check-ignore -v .env.local
-git ls-files .env.local
-git remote add origin <你的私有仓库地址>
-git push -u origin main
-```
+具体检查、保留双方提交历史与远程 README 的同步方法，以及 GitHub 网页验收步骤见 [GITHUB_SYNC_GUIDE.md](GITHUB_SYNC_GUIDE.md)。本地详细 README 将保留为根目录 PROJECT_GUIDE.md；推送前报告具体候选提交并等待确认，不强推，不覆盖远程历史。
 
-本地提交前已确认 `git check-ignore -v .env.local` 显示忽略规则，`git ls-files .env.local` 无输出。不要将 `.env.local`、`node_modules`、`.next` 或 `.vercel` 推送。若这些文件曾进入其他仓库的历史，需要先处理历史并轮换受影响的凭据。
+.env.local、node_modules、.next、.vercel 与备份不得上传；.env.example 仅含占位符。CI 使用 Node.js 24、npm ci 和占位环境变量，执行 lint → next typegen → typecheck → test → build → smoke，不连接私人数据库。首次检出后手动 typecheck 也应先执行 `npm exec -- next typegen`。远程 Actions 尚未验证。
 
 ## 5. Vercel 部署
 
-1. 在 [Vercel](https://vercel.com/) 导入 GitHub 私有仓库，Framework Preset 选择 Next.js。项目已用 Node.js 24 和 `npm run build` 完成本地生产构建；Vercel 项目选择 Node.js 24。
+1. 在 [Vercel](https://vercel.com/) 导入已同步源码的 GitHub 仓库，Framework Preset 选择 Next.js。项目已用 Node.js 24 和 `npm run build` 完成本地生产构建；Vercel 项目选择 Node.js 24。
 2. 在 Project Settings → Environment Variables 添加 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`，值与本地一致。分别配置需要的 Production/Preview/Development 环境。不要添加 Secret Key、Service Role Key 或用户密码。变更变量后重新部署才会生效。
 3. 部署后，在 Supabase **Authentication → URL Configuration** 将 Site URL 改为正式的 `https://...vercel.app` 或自有域名。本阶段的邮箱密码登录不依赖回调 URL；若以后启用邮件链接、邀请或密码重置，再将相应正式和预览回调地址加入 Redirect URLs。
 4. 打开生产站点，重复“手动验收”的登录、保存、刷新、退出和手机浏览器检查；确认访问私人页面的响应不可被共享缓存。
@@ -97,7 +92,7 @@ git push -u origin main
 
 `/learning` 可创建英语或韩语目标，按日期、总量与每周天数自动拆分学习任务；可完成任务、调整日期、记录实际学习分钟并查看进度和历史。`/fitness` 可设每周目标、管理训练计划与实际训练、收藏外部教学视频。日历按类型显示任务、学习和训练计划；Dashboard 读取已存储的学习与训练数据。没有新表时页面会显示待迁移提示。
 
-新表只在独立文件 [`supabase/migrations/202610260001_sprint_a.sql`](supabase/migrations/202610260001_sprint_a.sql) 中定义，**不会随网站代码自动部署到数据库**。先阅读 [数据库迁移指南](DATABASE_MIGRATION_GUIDE.md)，再按 [Phase 2 验收清单](PHASE2_CHECKLIST.md) 和 [正式上线人工验收](PRODUCTION_ACCEPTANCE.md) 操作。Sprint B、C、D 尚未开始；真实账户 CRUD 和远程 RLS 在迁移前均为待人工测试。
+新表只在独立文件 [`supabase/migrations/202610260001_sprint_a.sql`](supabase/migrations/202610260001_sprint_a.sql) 中定义，**不会随网站代码自动部署到数据库**。2026-10-26 只读实测七张表 API 均返回 404/PGRST205，仍需核对实际 schema 与迁移历史，不能据此断言从未迁移。先阅读 [数据库迁移指南](DATABASE_MIGRATION_GUIDE.md)，运行其中的只读核对 SQL，再判断是否需要迁移；没有确认不写远程数据库。真实功能与 RLS 用例见 [Phase 2 验收清单](PHASE2_CHECKLIST.md)，本轮结果与 GitHub 步骤见 [云端验收记录](SPRINT_A_CLOUD_ACCEPTANCE.md)。Sprint B、C、D 尚未开始，依赖顺序已列入 [路线图](PROJECT_ROADMAP.md)。
 
 ## 常见问题
 

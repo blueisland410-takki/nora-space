@@ -7,6 +7,10 @@
 /.vercel
 /out
 /coverage
+/backups/
+/supabase/.temp/
+*.dump
+*.backup
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
