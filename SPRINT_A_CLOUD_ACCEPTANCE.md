@@ -1,5 +1,7 @@
 # Sprint A 云端验收与 GitHub 准备记录
 
+> 最新状态（2026-10-29）：学习/健身七表已创建，原四表权限与关联索引已修复。以下旧章节包含迁移前记录；当前事实和待办见 [LAUNCH_STATUS.md](LAUNCH_STATUS.md)。请勿重复执行已有建表脚本。
+
 审查开始：2026-10-26；续查更新：2026-10-27；项目：`D:\nora-space`；Supabase：`ixmjytrgzrsjgbwfzamz`。Vercel 账号仍在审核，本轮不处理 Vercel。
 
 ## 状态总览

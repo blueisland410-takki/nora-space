@@ -1,5 +1,7 @@
 # NORA SPACE Phase 1.5 上线指南
 
+> 最新状态（2026-10-29）：学习/健身七表已创建，原四表权限与关联索引已修复。以下旧章节包含迁移前记录；当前事实和待办见 [LAUNCH_STATUS.md](LAUNCH_STATUS.md)。请勿重复执行已有建表脚本。
+
 状态：2026-10-27。本地 Git 已存在；GitHub 目标仓库可读取且用户接受 Public，但远程目前只有初始 README，**完整源码尚未同步，尚未部署 Vercel**。用户已关闭 Supabase 公开注册，最新只读复核仍为关闭。本地根目录为 `D:\nora-space`；未来 Vercel 的 Root Directory 选仓库根目录 `./`，不能填写本机 Windows 路径。
 
 ## 1. 上线门槛

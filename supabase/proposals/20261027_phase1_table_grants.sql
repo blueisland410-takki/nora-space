@@ -1,7 +1,7 @@
--- PROPOSAL ONLY. Requires explicit approval before execution on the remote project.
+-- APPLIED 2026-10-29 as remote migration 20261029104338; retained as historical review.
 -- Does not change table structure, business rows, RLS policies, or global defaults.
 -- The remote audit found authenticated TRUNCATE privileges on these four tables.
--- Keep this outside migrations until the execution/history plan is approved.
+-- See migrations/20261029104338_phase1_minimum_table_privileges.sql for the applied record.
 begin;
 
 revoke all on public.tasks, public.ideas, public.bookmarks, public.user_preferences
